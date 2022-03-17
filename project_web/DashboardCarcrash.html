@@ -1,0 +1,450 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Incident APP</title>
+        <link rel="stylesheet" href="src/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://kit.fontawesome.com/64219a0669.js" crossorigin="anonymous"></script>
+
+    </head>
+    <body>
+        <section class="hero is-small is-white">
+            <div class="hero-head is-small">
+              <nav class="navbar ">
+                <div class="container">
+                  <div class="navbar-brand">
+                    <a class="navbar-item">
+                      <img src="https://drive.google.com/uc?export=view&id=1OwXnWQEd5jAse8JzuIR-LgWg1mMcxKIC" alt="Logo">
+                    </a>
+                    
+                  </div>
+                  <div id="navbarMenuHeroB" class="navbar-menu">
+                    <div class="navbar-end">
+                      <a class="navbar-item" href="index.html">
+                        Home
+                      </a>
+                      <a class="navbar-item" href="information.html">
+                        Incident information
+                      </a>
+                      <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                          Dashboard
+                        </a>
+                
+                        <div class="navbar-dropdown">
+                          <a class="navbar-item" href="Dashboard.html">
+                            Overall
+                          </a>
+                          <a class="navbar-item" >
+                            Car crash
+                          </a>
+                          
+                        </div>
+                      
+                      <span class="navbar-item">
+                        
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </nav>
+              <div class="container has-text-centered">
+                
+              </div>
+            </div>
+
+          
+            <div class="hero-body has-background-light">
+              <div class="container">
+                <p class="title">
+                    Dashboard(Type: Car crash)
+                  </p>
+                <div class="columns">
+                    <div class="column is-three-fifths">
+                      
+                        <canvas id="myChart1"></canvas>
+                        
+                       <!-- <div class="select is-link mt-4">
+                         <select id="type">
+                           <option value="count">ทุกประเภท</option>
+                           <option value="countCarCrash">รถชน</option>
+                           <option value="countCarbroke">รถเสีย</option>
+                           <option value="countFixroad">ซ่อมแซมถนน</option>
+                           <option value="countCloseroad">ปิดถนน</option>
+                           <option value="countFire">ไฟไหม้</option>
+                         </select>
+                       </div> -->
+                      
+                    </div>
+                    <div class="column">
+                        <div class="column">
+                            <div class="card mt-4">
+                              <div class="card-content has-text-centered">
+                                
+                                <p>จำนวนผู้บาดเจ็บสะสม</p>
+                                <p class="has-text-weight-bold is-size-3" id="sumInjured"></p>
+                                <p>คน</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="column">
+                            <div class="card mt-4">
+                              <div class="card-content has-text-centered">
+                                
+                               
+                                <p>จำนวนผู้เสียชีวิตสะสม</p>
+                                <p class="has-text-weight-bold is-size-3" id="sumDead"></p>
+                                <p>คน</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                    </div>
+
+                </div>
+                
+                
+            </div>
+              
+            </div>
+            
+            
+          </section>
+        
+        <script src="src/index.js"></script>
+        
+        
+         <script type="module">
+  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-analytics.js";
+    import {collection, query, where, getDocs,orderBy } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js"; 
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyAulns-4iLoehDVVU3tvqAjpR9_mXa6ZHc",
+    authDomain: "projectaccident-9eb13.firebaseapp.com",
+    databaseURL: "https://projectaccident-9eb13-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "projectaccident-9eb13",
+    storageBucket: "projectaccident-9eb13.appspot.com",
+    messagingSenderId: "849975253396",
+    appId: "1:849975253396:web:897ad886d0d288b0489781",
+    measurementId: "G-LY3LMGJQR1"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+    var itemArray = [];
+    var day = [];
+    var daycarCrash = [];
+    var daycarBroke = [];
+    var dayfixRoad = [];
+    var daycloseRoad = [];
+    var dayfireAcc = [];
+    var acctype = [];
+    var injured = [];
+    var dead = [];
+    const db = getFirestore();
+    
+
+    const carCrash = query(collection(db, "Report"), where("acctype", "==", "รถชน"));
+    const carBroke = query(collection(db, "Report"), where("acctype", "==", "รถเสีย"));
+    const fixRoad = query(collection(db, "Report"), where("acctype", "==", "ซ่อมแซมถนน"));
+    const closeRoad = query(collection(db, "Report"), where("acctype", "==", "ปิดถนน"));
+    const fireAcc = query(collection(db, "Report"), where("acctype", "==", "ไฟไหม้"));
+    
+
+    const querySnapshot = await getDocs(collection(db, "Report"));
+    querySnapshot.forEach((doc) => {
+ 
+    acctype.push(doc.data().acctype);
+    day.push(doc.data().date);
+    injured.push(doc.data().injured);
+    dead.push(doc.data().dead);
+    
+    });
+
+    const querySnapshot2 = await getDocs(carCrash);
+    querySnapshot2.forEach((doc) => {
+    daycarCrash.push(doc.data().date);
+    
+    });
+
+    const querySnapshot3 = await getDocs(carBroke);
+    querySnapshot3.forEach((doc) => {
+    daycarBroke.push(doc.data().date);
+    
+    });
+    const querySnapshot4 = await getDocs(fixRoad);
+    querySnapshot4.forEach((doc) => {
+    dayfixRoad.push(doc.data().date);
+    
+    });
+    const querySnapshot5 = await getDocs(closeRoad);
+    querySnapshot5.forEach((doc) => {
+    daycloseRoad.push(doc.data().date);
+    
+    });
+    const querySnapshot6 = await getDocs(fireAcc);
+    querySnapshot6.forEach((doc) => {
+    dayfireAcc.push(doc.data().date);
+    
+    });
+
+   var month=[];
+   var monthCar=[];
+
+    day.sort(function(a, b){
+    var aa = a.split('-').reverse().join(),
+        bb = b.split('-').reverse().join();
+        var cc = a.split('-')
+        
+        month.push(cc[1]);
+        
+    return cc[1];
+    
+});
+
+daycarCrash.sort(function(a, b){
+    var aa = a.split('-').reverse().join(),
+        bb = b.split('-').reverse().join();
+        var ccm = a.split('-')
+        
+        monthCar.push(ccm[1]);
+        
+        
+    return ccm[1];
+    
+});
+daycarBroke.sort(function(a, b){
+    var aa = a.split('-').reverse().join(),
+        bb = b.split('-').reverse().join();
+    return aa < bb ? -1 : (aa > bb ? 1 : 0);
+    
+});
+dayfixRoad.sort(function(a, b){
+    var aa = a.split('-').reverse().join(),
+        bb = b.split('-').reverse().join();
+    return aa < bb ? -1 : (aa > bb ? 1 : 0);
+    
+});
+daycloseRoad.sort(function(a, b){
+    var aa = a.split('-').reverse().join(),
+        bb = b.split('-').reverse().join();
+    return aa < bb ? -1 : (aa > bb ? 1 : 0);
+    
+});
+dayfireAcc.sort(function(a, b){
+    var aa = a.split('-').reverse().join(),
+        bb = b.split('-').reverse().join();
+    return aa < bb ? -1 : (aa > bb ? 1 : 0);
+    
+});
+
+    var count =[];
+    var result=[];
+    var countCarCrash = [];
+    var countCarbroke = [];
+    var countFixroad = [];
+    var countCloseroad = [];
+    var countFire = [];
+
+    function getWordCntRd() {
+    return acctype.reduce((prev, nxt) => {
+    prev[nxt] = (prev[nxt] + 1) || 1;
+              
+    return prev
+    }, {});
+    }
+
+    function getdayCntRd() {
+    return month.sort().reduce((prev, nxt) => {
+    prev[nxt] = (prev[nxt] + 1) || 1;
+              
+    return prev
+    }, {});
+    }
+
+
+    function getdayCrashCntRd() {
+    return monthCar.sort().reduce((prev, nxt) => {
+    prev[nxt] = (prev[nxt] + 1) || 1;
+              
+    return prev
+    }, {});
+    }
+
+    function getdayBrokeCntRd() {
+    return daycarBroke.reduce((prev, nxt) => {
+    prev[nxt] = (prev[nxt] + 1) || 1;
+              
+    return prev
+    }, {});
+    }
+
+    function getdayFixCntRd() {
+    return dayfixRoad.reduce((prev, nxt) => {
+    prev[nxt] = (prev[nxt] + 1) || 1;
+              
+    return prev
+    }, {});
+    }
+
+    function getdayCloseCntRd() {
+    return daycloseRoad.reduce((prev, nxt) => {
+    prev[nxt] = (prev[nxt] + 1) || 1;
+              
+    return prev
+    }, {});
+    }
+
+    function getdayFireCntRd() {
+    return dayfireAcc.reduce((prev, nxt) => {
+    prev[nxt] = (prev[nxt] + 1) || 1;
+              
+    return prev
+    }, {});
+    }
+
+
+    var injuredNum = injured.map(Number);
+    var deadNum = dead.map(Number);
+    const sumInjured = injuredNum.reduce((partialSum, a) => partialSum + a, 0);
+    const sumDead = deadNum.reduce((partialSum, b) => partialSum + b, 0);
+    console.log(sumInjured);
+    console.log(sumDead);
+    document.getElementById("sumInjured").innerHTML = sumInjured
+    document.getElementById("sumDead").innerHTML = sumDead
+
+    result = getWordCntRd(acctype);
+    count = getdayCntRd(month);
+    countCarCrash = getdayCrashCntRd(monthCar);
+    countCarbroke = getdayBrokeCntRd(daycarBroke);
+    countFixroad = getdayFixCntRd(dayfixRoad);
+    countCloseroad = getdayCloseCntRd(daycloseRoad);
+    countFire = getdayFireCntRd(dayfireAcc);
+
+    // const ctx = document.getElementById('myChart').getContext('2d');
+    //       const xlabels =[];
+    //       const myChart = new Chart(ctx, {
+    //           type: 'bar',
+    //           data: {
+                  
+    //               datasets: [{
+    //                   label: 'cases',
+    //                   data: result,
+    //                   backgroundColor: [
+    //                   'rgba(255, 99, 132, 0.2)',
+    //                   'rgba(255, 159, 64, 0.2)',
+    //                   'rgba(255, 205, 86, 0.2)',
+    //                   'rgba(75, 192, 192, 0.2)',
+    //                   'rgba(54, 162, 235, 0.2)'],
+    //                   borderColor: [
+    //                   'rgb(255, 99, 132)',
+    //                   'rgb(255, 159, 64)',
+    //                   'rgb(255, 205, 86)',
+    //                   'rgb(75, 192, 192)',
+    //                   'rgb(54, 162, 235)'],
+    //                   borderWidth: 1
+    //               }]
+    //           },
+    //           options: {
+    //             plugins: {
+    //         title: {
+    //             display: true,
+    //             text: 'จำนวนเหตุการณ์ทั้งหมด (แบ่งเป็นประเภท)'    
+    //         }
+    //         }
+    //         }
+    //       });
+
+          const ctx1 = document.getElementById('myChart1').getContext('2d');
+          const xlabels1 =[];
+          const myChart1 = new Chart(ctx1, {
+              type: 'bar',
+              data: {
+                  
+                  datasets: [{
+                      label: 'cases',
+                      data: countCarCrash,
+                      backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(255, 159, 64, 0.2)',
+                      'rgba(255, 205, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(54, 162, 235, 0.2)'],
+                      borderColor: [
+                      'rgb(255, 99, 132)',
+                      'rgb(255, 159, 64)',
+                      'rgb(255, 205, 86)',
+                      'rgb(75, 192, 192)',
+                      'rgb(54, 162, 235)'],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                plugins: {
+            title: {
+                display: true,
+                text: 'จำนวนอุบัติเหตุรถชนสะสมรายเดือน'    
+            }
+            },
+            scales: {
+            y: {
+                suggestedMin: 1
+                
+            }
+        }
+              }
+          });
+          
+          
+
+          var type = document.getElementById("type");
+          type.addEventListener('change',changeG);
+          function changeG(){
+            
+            if(type.value == "countCarCrash"){
+            myChart1.data.datasets[0].data = countCarCrash;
+            myChart1.options.plugins.title.text = 'จำนวนอุบัติเหตุรถชนสะสมรายเดือน';
+            myChart1.update();
+            }
+            if(type.value == "countCarbroke"){
+            myChart1.data.datasets[0].data = countCarbroke;
+            myChart1.options.plugins.title.text = 'จำนวนอุบัติเหตุ ประเภทรถเสีย (แบ่งตามวันที่เกิดเหตุ)';
+            myChart1.update();
+            }
+            
+            if(type.value == "countFixroad"){
+            myChart1.data.datasets[0].data = countFixroad;
+            myChart1.options.plugins.title.text = 'จำนวนอุบัติเหตุ ประเภทซ่อมแซมถนน (แบ่งตามวันที่เกิดเหตุ)';
+            myChart1.update();
+            }
+          
+            if(type.value == "count"){
+            myChart1.data.datasets[0].data = count;
+            myChart1.options.plugins.title.text = 'จำนวนอุบัติเหตุทั้งหมด (แบ่งตามวันที่เกิดเหตุ)';
+            myChart1.update();
+            }
+
+            if(type.value == "countCloseroad"){
+            myChart1.data.datasets[0].data = countCloseroad;
+            myChart1.options.plugins.title.text = 'จำนวนอุบัติเหตุ ประเภทปิดถนน (แบ่งตามวันที่เกิดเหตุ)';
+            myChart1.update();
+            }
+            if(type.value == "countFire"){
+            myChart1.data.datasets[0].data = countFire;
+            myChart1.options.plugins.title.text = 'จำนวนอุบัติเหตุ ประเภทไฟไหม้ (แบ่งตามวันที่เกิดเหตุ)';
+            myChart1.update();
+            }
+          }
+
+        </script>
+    </body>
+</html>

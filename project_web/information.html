@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Incident APP</title>
+        <link rel="stylesheet" href="src/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://kit.fontawesome.com/64219a0669.js" crossorigin="anonymous"></script>
+
+        
+        
+    </head>
+    <body>
+        <section class="hero is-white">
+            <div class="hero-head is-small">
+              <nav class="navbar">
+                <div class="container">
+                  <div class="navbar-brand">
+                    <a class="navbar-item">
+                      <img src="https://drive.google.com/uc?export=view&id=1OwXnWQEd5jAse8JzuIR-LgWg1mMcxKIC" alt="Logo">
+                    </a>
+                    
+                  </div>
+                  <div id="navbarMenuHeroB" class="navbar-menu">
+                    <div class="navbar-end">
+                      <a class="navbar-item " href="index.html">
+                        Home
+                      </a>
+                      <a class="navbar-item is-active">
+                        Incident information
+                      </a>
+                      <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                          Dashboard
+                        </a>
+                
+                        <div class="navbar-dropdown">
+                          <a class="navbar-item" href="Dashboard.html">
+                            Overall
+                          </a>
+                          <a class="navbar-item" href="DashboardCarcrash.html">
+                            Car crash
+                          </a>
+                          
+                        </div>
+                      
+                      <span class="navbar-item">
+                        
+                      </span>
+                    </div>
+                      <span class="navbar-item">
+                        
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </nav>
+              <div class="container has-text-centered">
+                
+                
+              </div>
+            </div>
+          
+            <div class="hero-body has-background-light">
+              <div class="container has-text-centered">
+              <table id="myTable" class="table is-striped is-fullwidth is-centered">
+                <thead>
+                  
+                  <th>acctype</th>
+                  <th>date</th>
+                  <th>dead</th>
+                  <th>detail</th>
+                  <th>injured</th>
+                  
+                </thead>
+                <tbody id="tbody1">
+                  
+                 
+                </tbody>
+                
+              </table>
+              
+            </div>
+            </div>
+            
+          </section>
+        
+        <script src="src/index.js"></script>
+        
+        <script type="module">
+          
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+          import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-analytics.js";
+          import {collection, query, where, getDocs,orderBy } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
+          import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js"; 
+          
+          const firebaseConfig = {
+            apiKey: "AIzaSyAulns-4iLoehDVVU3tvqAjpR9_mXa6ZHc",
+            authDomain: "projectaccident-9eb13.firebaseapp.com",
+            databaseURL: "https://projectaccident-9eb13-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "projectaccident-9eb13",
+            storageBucket: "projectaccident-9eb13.appspot.com",
+            messagingSenderId: "849975253396",
+            appId: "1:849975253396:web:897ad886d0d288b0489781",
+            measurementId: "G-LY3LMGJQR1"
+          };
+        
+          
+          const app = initializeApp(firebaseConfig);
+          const analytics = getAnalytics(app);
+          var itemArray = [];
+          var day = [];
+          var acctype = [];
+        
+          
+
+          const db = getFirestore();
+          
+          
+          
+              var tbody = document.getElementById('tbody1');
+
+            function addToTable(acctype,date,dead,detail,injured,uid){
+              var trow = document.createElement('tr');
+             
+              var td3 = document.createElement('td');
+              var td4 = document.createElement('td');
+              var td5 = document.createElement('td');
+              var td6 = document.createElement('td');
+              var td7 = document.createElement('td');
+              
+              var td9 = document.createElement('a');
+              var td10 = document.createElement('tr');
+              var td11 = document.createElement('td');
+
+             td9.setAttribute('class', 'button is-small is-link is-light');
+             td9.setAttribute('href','detail1.html')
+             td10.setAttribute('class', 'content')
+             //td11.setAttribute('colspan', '6')
+              
+              td3.innerHTML = acctype;
+              td4.innerHTML = date;
+              td5.innerHTML = dead;
+              td6.innerHTML = detail;
+              td7.innerHTML = injured;
+              
+              td9.innerHTML = "more";
+              //td11.innerHTML = "detail";
+      
+              trow.appendChild(td3);
+              trow.appendChild(td4);
+              trow.appendChild(td5);
+              trow.appendChild(td6);
+              trow.appendChild(td7);
+              
+              trow.appendChild(td9);
+              tbody.appendChild(trow);
+              td10.appendChild(td11);
+              //tbody.appendChild(td10);
+              
+            }
+
+            const querySnapshot = await getDocs(collection(db, "Report"));
+            querySnapshot.forEach((doc) => {
+ 
+              acctype.push(doc.data().acctype);
+              
+              
+            });
+
+            
+          
+            function addAllData(DocList){
+              tbody.innerHTML="";
+              DocList.forEach(element => 
+              {addToTable(element.acctype,element.date,element.dead,element.detail,element.injured)});
+            }
+
+            async function GetDataFire(){
+            const querySnapshot = await getDocs(collection(db, "Report"));
+            
+            var cases = [];
+            querySnapshot.forEach((doc) => {
+            cases.push(doc.data());
+            
+            
+          });
+
+
+          for(i = 0; i < cases.length; i++){
+            day.push(cases[i].date)
+            
+            
+           }
+
+           
+
+          
+          addAllData(cases);
+          }
+          window.onload = GetDataFire();
+          
+          var count =[];
+          var result=[];
+
+
+          function getWordCntRd() {
+            return acctype.reduce((prev, nxt) => {
+            prev[nxt] = (prev[nxt] + 1) || 1;
+              
+            return prev
+            }, {});
+            }
+              
+            result = getWordCntRd(acctype);
+            
+               
+
+  var coll = document.getElementsByClassName("button is-small is-link is-light");
+  var content = document.getElementsByClassName("content")
+  
+  var i;
+
+  for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    //content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+         
+        </script>
+    </body>
+</html>

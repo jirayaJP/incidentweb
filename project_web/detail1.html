@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Incident APP</title>
+        <link rel="stylesheet" href="src/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
+        <script src="https://kit.fontawesome.com/64219a0669.js" crossorigin="anonymous"></script>
+
+        
+        
+    </head>
+    <body>
+        <section class="hero is-white">
+            <div class="hero-head is-small">
+              <nav class="navbar">
+                <div class="container">
+                  <div class="navbar-brand">
+                    <a class="navbar-item">
+                      <img src="https://drive.google.com/uc?export=view&id=1OwXnWQEd5jAse8JzuIR-LgWg1mMcxKIC" alt="Logo">
+                    </a>
+                    
+                  </div>
+                  <div id="navbarMenuHeroB" class="navbar-menu">
+                    <div class="navbar-end">
+                        <div class="navbar-item">
+                            <div class="buttons">
+                        <a class="button is-info" href="information.html">
+                            <strong>Go back</strong>
+                          </a>
+                      
+                      
+                    </div>
+                    </div>
+                    </div>
+                  </div>
+                  
+                </div>
+              </nav>
+              <div class="container has-text-centered">
+                
+                
+              </div>
+              
+            </div>
+          
+            <div class="hero-body is-medium has-background-light">
+              
+                <div class="columns">
+                    <div class="column">
+                        <div class="container has-text-centered">
+                        <p class="has-text-weight-bold is-size-3 pb-4">Location</p>
+                    
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1937.6062091455858!2d100.54897895799247!3d13.766059997584573!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xea3eb4831fd0ba2f!2zMTPCsDQ1JzU3LjgiTiAxMDDCsDMzJzAwLjMiRQ!5e0!3m2!1sen!2sth!4v1646038239837!5m2!1sen!2sth" width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+            </div>
+            <div class="column">
+                <p class="has-text-weight-bold is-size-3 pb-4">Detail</p>
+                <p class="is-size-4 pb-4">Accident type:ซ่อมแซมถนน</p>
+                <p class="is-size-4 pb-4">Injured:0</p>
+                <p class="is-size-4 pb-4">Dead:0</p>
+                <p class="is-size-4 pb-4">Detail:road repair</p>
+                <p class="is-size-4 pb-4">Date:24-01-2022</p>
+                <p class="is-size-4 pb-4">Reporter:</p>
+            </div>
+            </div>
+            </div>
+            
+            
+          </section>
+        
+        <script src="src/index.js"></script>
+        
+        <script type="module">
+          
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+          import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-analytics.js";
+          import {collection, query, where, getDocs,orderBy } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
+          import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
+          import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-auth.js"; 
+          
+          const firebaseConfig = {
+            apiKey: "AIzaSyAulns-4iLoehDVVU3tvqAjpR9_mXa6ZHc",
+            authDomain: "projectaccident-9eb13.firebaseapp.com",
+            databaseURL: "https://projectaccident-9eb13-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "projectaccident-9eb13",
+            storageBucket: "projectaccident-9eb13.appspot.com",
+            messagingSenderId: "849975253396",
+            appId: "1:849975253396:web:897ad886d0d288b0489781",
+            measurementId: "G-LY3LMGJQR1"
+          };
+        
+          
+          const app = initializeApp(firebaseConfig);
+          const analytics = getAnalytics(app);
+          var itemArray = [];
+          var day = [];
+          var acctype = [];
+        
+          
+
+          const db = getFirestore();
+          var acc = document.getElementsByClassName("acc")
+          const querySnapshot = await getDocs(collection(db, "Report"));
+            querySnapshot.forEach((doc) => {
+ 
+              acctype.push(doc.data().acctype);
+              
+              console.log(acctype)
+              
+              
+              
+            });
+
+            
+        </script>
+    </body>
+</html>
